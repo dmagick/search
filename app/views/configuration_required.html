@@ -1,12 +1,11 @@
 ~template::include:header.html~
 <h2>Some configuration is required</h2>
 It seems you're using this for the first time, a couple of things need to be done before it will be up and running.<br/>
+Create a directory and make sure the web server can write to it: cache/<br/>
 Create a file: app/config.php<br/>
 It should contain the following:<br/>
 &lt;?php<br/>
 $config = array(<br/>
 'flickrApiKey' => '....',<br/>
 );<br/>
-?&gt;<br/>
-Create a directory and make sure the web server can write to it: cache/<br/>
 ~template::include:footer.html~
