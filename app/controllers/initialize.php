@@ -63,28 +63,28 @@ abstract class initialize
          * We're always going to need the template controller.
          * Let's include it now.
          */
-        require self::$_basedir.'/app/controllers/templates.php';
+        require self::$_basedir.'/app/controllers/template.php';
 
-        templates::initialize(self::$_basedir);
+        template::initialize(self::$_basedir);
 
         $configFile = self::$_basedir.'/app/config.php';
         if (is_file($configFile) === FALSE) {
-            templates::printTemplate(NULL, 'configuration_required', 500);
+            template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
 
         $config = require $configFile;
         if (isset($config['flickrApiKey']) === FALSE || empty($config['flickrApiKey']) === TRUE) {
-            templates::printTemplate(NULL, 'configuration_required', 500);
+            template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
 
         if (is_dir(self::$_basedir.'/cache') === FALSE) {
-            templates::printTemplate(NULL, 'configuration_required', 500);
+            template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
         if (is_writable(self::$_basedir.'/cache') === FALSE) {
-            templates::printTemplate(NULL, 'configuration_required', 500);
+            template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
 
@@ -115,7 +115,7 @@ abstract class initialize
         $controllerFile = self::$_basedir.'/app/controllers/'.$controller.'.php';
 
         if (file_exists($controllerFile) === FALSE || in_array($controller, $allowedControllers) === FALSE) {
-            templates::printTemplate(NULL, '404', 404);
+            template::printTemplate(NULL, '404', 404);
             exit;
         }
 

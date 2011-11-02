@@ -7,7 +7,7 @@ if (class_exists('initialize') === FALSE) {
     exit;
 }
 
-class templates extends initialize
+class template extends initialize
 {
     /**
      * Where to start looking for templates.
