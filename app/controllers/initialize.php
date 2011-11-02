@@ -47,6 +47,16 @@ abstract class initialize
         return TRUE;
     }
 
+    /**
+     * All the "magic" works here.
+     * This checks the config is set up, cache folder exists and is writable
+     * and if neither of those are true, then displays an appropriate message.
+     *
+     * If it is true, it works out the url you're trying to view and passes it to the
+     * appropriate controller to deal with.
+     *
+     * @return void
+     */
     public static function process()
     {
         /**
@@ -75,6 +85,25 @@ abstract class initialize
         }
         if (is_writable(self::$_basedir.'/cache') === FALSE) {
             templates::printTemplate(NULL, 'configuration_required', 500);
+            exit;
+        }
+
+        $controller = 'search';
+        $otherInfo  = '';
+        /**
+         * If we've got a url, lets see if it's valid.
+         * /controller/stuff
+         * stuff is passed to the controller::process() method.
+         */
+        if (isset($_SERVER['PATH_INFO']) === TRUE) {
+            $info       = trim($_SERVER['PATH_INFO'], '/');
+            $bits       = explode('/', $info);
+            $controller = array_shift($bits);
+            $otherInfo  = implode('/', $bits);
+        }
+
+        if (file_exists(self::$_basedir.'/apps/controllers/'.$controller.'.php') === FALSE) {
+            templates::printTemplate(NULL, '404', 404);
             exit;
         }
     }
