@@ -44,7 +44,7 @@ class templates extends initialize
      *
      * @param string  $controller   Which controller is displaying the template.
      * @param string  $templateName Template name to print out.
-     * @param integer $httpCode     The http header code to use. Only used if it's not a 200 code.
+     * @param integer $httpCode     The http header code to use. Currently only supports 200 and 404.
      *
      * @return void
      */
@@ -63,6 +63,14 @@ class templates extends initialize
             trigger_error('Template '.$templateName.' doesn\'t exist', E_USER_ERROR);
             exit;
         }
+
+        switch ($httpCode) {
+            case 404:
+                header('Status: 404 Not Found');
+            break;
+            default:
+        }
+
         echo self::_process($template);
     }
 
