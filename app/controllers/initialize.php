@@ -102,10 +102,25 @@ abstract class initialize
             $otherInfo  = implode('/', $bits);
         }
 
-        if (file_exists(self::$_basedir.'/apps/controllers/'.$controller.'.php') === FALSE) {
+        /**
+         * Allow access to only particular controllers:
+         * - search
+         * mainly so people can't guess this class name and cause errors
+         * and same for templates.
+         */
+        $allowedControllers = array(
+                               'search',
+                              );
+
+        $controllerFile = self::$_basedir.'/app/controllers/'.$controller.'.php';
+
+        if (file_exists($controllerFile) === FALSE || in_array($controller, $allowedControllers) === FALSE) {
             templates::printTemplate(NULL, '404', 404);
             exit;
         }
+
+        require $controllerFile;
+        $controller::process($otherInfo);
     }
 }
 
