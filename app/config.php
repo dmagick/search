@@ -2,4 +2,4 @@
 $config = array(
 	'flickrApiKey' => '',
 );
-
+return $config;
