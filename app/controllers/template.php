@@ -57,9 +57,7 @@ class template extends initialize
         }
         if (file_exists($template) === FALSE) {
             header('HTTP/1.1 500 Internal Server Error');
-            echo self::_process(self::$_templateDir.'/header.html');
             echo self::_process(self::$_templateDir.'/uhoh.html');
-            echo self::_process(self::$_templateDir.'/footer.html');
             trigger_error('Template '.$templateName.' doesn\'t exist', E_USER_ERROR);
             exit;
         }
@@ -96,7 +94,18 @@ class template extends initialize
         preg_match_all('/~template::include:(.*?)~/', $contents, $matches);
         if (empty($matches[0]) === FALSE) {
             foreach ($matches[0] as $match => $includeTemplate) {
-                $contents = str_replace($includeTemplate, self::_process(self::$_templateDir.'/'.$matches[1][$match]), $contents);
+                /**
+                 * Quick check to make sure we're not recursively including our own template.
+                 *
+                 * Should be handled better so we don't get template 'A' including template 'B'
+                 * which then includes template 'A'.
+                 */
+                $subtemplate = $matches[1][$match];
+                $replacement = '';
+                if ($subtemplate !== $template) {
+                    $replacement = self::_process(self::$_templateDir.'/'.$subtemplate);
+                }
+                $contents = str_replace($includeTemplate, $replacement, $contents);
             }
         }
         return $contents;
