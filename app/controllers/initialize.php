@@ -91,11 +91,13 @@ abstract class initialize
 
         self::$_config = $config;
 
-        if (is_dir(self::$_basedir.'/logs') === FALSE) {
+        $logDir = self::$_basedir.'/app/logs';
+
+        if (is_dir($logDir) === FALSE) {
             template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
-        if (is_writable(self::$_basedir.'/logs') === FALSE) {
+        if (is_writable($logDir) === FALSE) {
             template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
@@ -176,7 +178,7 @@ abstract class initialize
 
     /**
      * Error handler.
-     * This logs the error and where it comes from to the logs/errors.log file.
+     * This logs the error and where it comes from to the app/logs/errors.log file.
      * If it's a E_USER_ERROR, it also displays the server error page to let
      * the user know something went really wrong.
      */
@@ -184,7 +186,7 @@ abstract class initialize
     {
         $message  = date('r')."\tGot error ${errstr} (${errno}) from ";
         $message .= "${errfile} on line ${errline}\n";
-        error_log($message, 3, self::$_basedir.'/logs/errors.log');
+        error_log($message, 3, self::$_basedir.'/app/logs/errors.log');
 
         // Leave this as a switch in case we need to extend it later.
         switch ($errno)
