@@ -90,6 +90,8 @@ abstract class initialize
 
         $controller = 'search';
         $otherInfo  = '';
+        $queryInfo  = $_GET;
+
         /**
          * If we've got a url, lets see if it's valid.
          * /controller/stuff
@@ -120,25 +122,70 @@ abstract class initialize
         }
 
         require $controllerFile;
-        $controller::process($otherInfo);
+        $controller::process($otherInfo, $queryInfo);
     }
-}
 
-function error_handler($errno, $errstr, $errfile, $errline)
-{
-    switch ($errno)
+    /**
+     * Get a model for a controller to work with.
+     * If it can't be found, returns false.
+     * Otherwise returns the model ready for use.
+     *
+     * @param string $modelName The model to get.
+     *
+     * @return mixed
+     */
+    protected static function getModel($modelName=NULL)
     {
-        case E_USER_ERROR:
-            error_log("Got error ${errstr} (${errno}) from ${errfile} on line ${errline}");
-            exit;
-        break;
-        default:
-            error_log("Got error ${errstr} (${errno}) from ${errfile} on line ${errline}");
+        if ($modelName === NULL) {
+            return FALSE;
+        }
+
+        $modelFile = self::$_basedir.'/app/models/'.$modelName.'.php';
+        if (file_exists($modelFile) === FALSE) {
+            return FALSE;
+        }
+        require $modelFile;
+        $model = $modelName::getInstance();
+        return $model;
     }
-    //return TRUE;
+
+    /**
+     * Print the generic server error page ('uhoh'), with the appropriate header.
+     *
+     * @return void
+     */
+    protected static function printServerError()
+    {
+            header('HTTP/1.1 500 Internal Server Error');
+            echo template::printTemplate(NULL, 'uhoh');
+    }
+
+    /**
+     * Error handler.
+     * This logs the error and where it comes from to the cache/errors.log file.
+     * If it's a E_USER_ERROR, it also displays the server error page to let
+     * the user know something went really wrong.
+     */
+    public static function error_handler($errno, $errstr, $errfile, $errline)
+    {
+        $message  = date('r')."\tGot error ${errstr} (${errno}) from ";
+        $message .= "${errfile} on line ${errline}\n";
+        error_log($message, 3, self::$_basedir.'/cache/errors.log');
+
+        // Leave this as a switch in case we need to extend it later.
+        switch ($errno)
+        {
+            case E_USER_ERROR:
+                self::printServerError();
+                exit;
+            break;
+        }
+        return TRUE;
+    }
+
 }
 
-set_error_handler('error_handler');
+set_error_handler(array('initialize', 'error_handler'));
 
 /* vim: set expandtab ts=4 sw=4: */
 
