@@ -59,7 +59,7 @@ abstract class initialize
 
     /**
      * All the "magic" works here.
-     * This checks the config is set up, cache folder exists and is writable
+     * This checks the config is set up, logs folder exists and is writable
      * and if neither of those are true, then displays an appropriate message.
      *
      * If it is true, it works out the url you're trying to view and passes it to the
@@ -91,11 +91,11 @@ abstract class initialize
 
         self::$_config = $config;
 
-        if (is_dir(self::$_basedir.'/cache') === FALSE) {
+        if (is_dir(self::$_basedir.'/logs') === FALSE) {
             template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
-        if (is_writable(self::$_basedir.'/cache') === FALSE) {
+        if (is_writable(self::$_basedir.'/logs') === FALSE) {
             template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
@@ -176,7 +176,7 @@ abstract class initialize
 
     /**
      * Error handler.
-     * This logs the error and where it comes from to the cache/errors.log file.
+     * This logs the error and where it comes from to the logs/errors.log file.
      * If it's a E_USER_ERROR, it also displays the server error page to let
      * the user know something went really wrong.
      */
@@ -184,7 +184,7 @@ abstract class initialize
     {
         $message  = date('r')."\tGot error ${errstr} (${errno}) from ";
         $message .= "${errfile} on line ${errline}\n";
-        error_log($message, 3, self::$_basedir.'/cache/errors.log');
+        error_log($message, 3, self::$_basedir.'/logs/errors.log');
 
         // Leave this as a switch in case we need to extend it later.
         switch ($errno)
