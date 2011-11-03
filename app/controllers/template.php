@@ -21,6 +21,12 @@ class template extends initialize
     private static $_templateCache = array();
 
     /**
+     * An array of keywords that will be automatically replaced.
+     */
+    private static $_keywords = array(
+                                );
+
+    /**
      * Our own initialize method. Check with the parent that it's ok to proceed first.
      * Then we set our templateDir appropriately.
      *
@@ -35,6 +41,15 @@ class template extends initialize
         }
 
         self::$_templateDir = $basedir.'/app/views';
+
+        $protocol = 'http';
+        if (isset($_SERVER['HTTPS']) === TRUE) {
+            $protocol = 'https';
+        }
+        $server = trim($_SERVER['HTTP_HOST'], '/');
+        $folder = trim($_SERVER['SCRIPT_NAME'], '/');
+        $url    = $protocol.'://'.$server.'/'.$folder;
+        self::$_keywords['~system::base:url~'] = $url;
 
         return TRUE;
     }
@@ -56,8 +71,6 @@ class template extends initialize
             $template = self::$_templateDir.'/'.$controller.'/'.$templateName.'.html';
         }
         if (file_exists($template) === FALSE) {
-            header('HTTP/1.1 500 Internal Server Error');
-            echo self::_process(self::$_templateDir.'/uhoh.html');
             trigger_error('Template '.$templateName.' doesn\'t exist', E_USER_ERROR);
             exit;
         }
@@ -108,6 +121,10 @@ class template extends initialize
                 $contents = str_replace($includeTemplate, $replacement, $contents);
             }
         }
+
+        // Replace system keywords.
+        $contents = str_replace(array_keys(self::$_keywords), array_values(self::$_keywords), $contents);
+
         return $contents;
     }
 }
