@@ -23,11 +23,39 @@ class search extends initialize
      *
      * @return void
      */
-    public static function process($info=NULL)
+    public static function process($info=NULL, $queryInfo=array())
     {
-        if ($info === NULL || empty($info) === TRUE) {
+        if (($info === NULL || empty($info) === TRUE) && empty($queryInfo) === TRUE) {
             template::printTemplate(__CLASS__, 'searchform');
             return;
+        }
+
+        if (empty($queryInfo) === TRUE || isset($queryInfo['search']) === FALSE) {
+            template::printTemplate(__CLASS__, 'searchform');
+            return;
+        }
+
+        $searchTerms = $queryInfo['search'];
+
+        $page = 0;
+        if (isset($queryInfo['page']) === TRUE && intval($queryInfo['page']) == $queryInfo['page']) {
+            $page = (int)$queryInfo['page'];
+        }
+
+        $model = self::getModel(__CLASS__);
+        if ($model === FALSE) {
+            trigger_error('Unable to get search model', E_USER_ERROR);
+            exit;
+        }
+
+        /**
+         * If the model can't do a search, it will throw an exception.
+         */
+        try {
+            $results = $model->search($searchTerms, $page);
+        } catch (Exception $e) {
+            trigger_error('Unable to search for '.$searchTerms.' and page '.$page.':'.$e->getMessage(), E_USER_ERROR);
+            exit;
         }
     }
 }
