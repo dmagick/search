@@ -37,9 +37,9 @@ class search extends initialize
 
         $searchTerms = $queryInfo['search'];
 
-        $page = 0;
-        if (isset($queryInfo['page']) === TRUE && intval($queryInfo['page']) == $queryInfo['page']) {
-            $page = (int)$queryInfo['page'];
+        $page = 1;
+        if (isset($queryInfo['page']) === TRUE) {
+            $page = $queryInfo['page'];
         }
 
         $model = self::getModel(__CLASS__);
