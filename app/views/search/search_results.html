@@ -1,0 +1,8 @@
+~template:include:header.html~
+To start a new search, enter a search term in the box below.<br/>
+~template:include:search/searchform.html~
+Your search for "~search:search:term~" returned ~search:search:total~ results.<br/>
+~template:foreach:search:search:results:begin~
+	<a href="~search:search:results:fullurl~" target="_blank"><img src="~search:search:results:thumbnail~" alt="~search:search:results:title~" border="0" /></a><br/>
+~template:foreach:search:search:results:end~
+~template:include:footer.html~
