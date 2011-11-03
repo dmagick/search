@@ -6,7 +6,17 @@
  */
 abstract class initialize
 {
+    /**
+     * Keep a reference to the base directory so we know where to start
+     * looking for things.
+     */
     protected static $_basedir = NULL;
+
+    /**
+     * Keep a reference to the config so we only load it up once.
+     * This is passed to all models - they can deal with it as they wish.
+     */
+    protected static $_config = array();
 
     /**
      * This is a static class. Calling it with 'new initisalize' should fail.
@@ -79,6 +89,8 @@ abstract class initialize
             exit;
         }
 
+        self::$_config = $config;
+
         if (is_dir(self::$_basedir.'/cache') === FALSE) {
             template::printTemplate(NULL, 'configuration_required', 500);
             exit;
@@ -144,8 +156,10 @@ abstract class initialize
         if (file_exists($modelFile) === FALSE) {
             return FALSE;
         }
+
         require $modelFile;
-        $model = $modelName::getInstance();
+        $modelName = $modelName.'Model';
+        $model     = $modelName::getInstance(self::$_config);
         return $model;
     }
 
