@@ -26,16 +26,19 @@ class search extends initialize
     public static function process($info=NULL, $queryInfo=array())
     {
         if (($info === NULL || empty($info) === TRUE) && empty($queryInfo) === TRUE) {
-            template::printTemplate(__CLASS__, 'searchform');
+            template::setKeyword('search:search:term', 'Enter a search term');
+            template::printTemplate(__CLASS__, 'search');
             return;
         }
 
         if (empty($queryInfo) === TRUE || isset($queryInfo['search']) === FALSE) {
-            template::printTemplate(__CLASS__, 'searchform');
+            template::setKeyword('search:search:term', 'Enter a search term');
+            template::printTemplate(__CLASS__, 'search');
             return;
         }
 
         $searchTerms = $queryInfo['search'];
+        template::setKeyword('search:search:term', htmlspecialchars($searchTerms));
 
         $page = 1;
         if (isset($queryInfo['page']) === TRUE) {
@@ -52,11 +55,39 @@ class search extends initialize
          * If the model can't do a search, it will throw an exception.
          */
         try {
-            $results = $model->search($searchTerms, $page);
+            $results = $model::search($searchTerms, $page);
         } catch (Exception $e) {
             trigger_error('Unable to search for '.$searchTerms.' and page '.$page.':'.$e->getMessage(), E_USER_ERROR);
             exit;
         }
+
+        /**
+         * Make sure we get an "OK" response.
+         */
+        if ($results['response'] !== 'ok') {
+            trigger_error('Unable to search for '.$searchTerms.' and page '.$page.':'.$e->getMessage(), E_USER_ERROR);
+            exit;
+        }
+
+        /**
+         * No results? Nice and easy :)
+         */
+        if ($results['info']['total'] == 0) {
+            template::printTemplate(__CLASS__, 'search_no_results');
+            return;
+        }
+
+        /**
+         * Just in case there are weird characters or quotes etc we need to deal with..
+         */
+        foreach ($results['photos'] as $_idx => $photo) {
+            $photo['title'] = htmlspecialchars($photo['title']);
+        }
+
+        template::setKeyword('search:search:total', $results['info']['total']);
+        template::setKeyword('search:search:results', $results['photos']);
+        template::printTemplate(__CLASS__, 'search_results');
+
     }
 }
 
