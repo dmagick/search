@@ -49,7 +49,7 @@ class template extends initialize
         $server = trim($_SERVER['HTTP_HOST'], '/');
         $folder = trim($_SERVER['SCRIPT_NAME'], '/');
         $url    = $protocol.'://'.$server.'/'.$folder;
-        self::$_keywords['~system::base:url~'] = $url;
+        self::$_keywords['~system:base:url~'] = $url;
 
         return TRUE;
     }
@@ -104,7 +104,7 @@ class template extends initialize
             $contents = self::$_templateCache[$template];
         }
 
-        preg_match_all('/~template::include:(.*?)~/', $contents, $matches);
+        preg_match_all('/~template:include:(.*?)~/', $contents, $matches);
         if (empty($matches[0]) === FALSE) {
             foreach ($matches[0] as $match => $includeTemplate) {
                 /**
