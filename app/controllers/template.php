@@ -55,6 +55,25 @@ class template extends initialize
     }
 
     /**
+     * Set keywords for a particular template or templates.
+     * These get replaced after other keywords and includes have been processed.
+     *
+     * @param string $keyword     The keyword to replace.
+     * @param string $replacement The replacement - the calling method must
+     *                            deal with processing it (if it's from user input,
+     *                            specialchars it etc).
+     *
+     * @return void
+     */
+    public static function setKeyword($keyword='', $replacement='')
+    {
+        if (empty($keyword) === TRUE) {
+            return FALSE;
+        }
+        self::$_keywords['~'.$keyword.'~'] = $replacement;
+    }
+
+    /**
      * Prints a template out, doesn't return anything.
      *
      * @param string  $controller   Which controller is displaying the template.
@@ -102,6 +121,41 @@ class template extends initialize
             self::$_templateCache[$template] = $contents;
         } else {
             $contents = self::$_templateCache[$template];
+        }
+
+        /**
+         * Check if a template has an embedded foreach loop.
+         * It will look like:
+         * ~template:foreach:$controller:$method:$variable:begin~
+         * and
+         * ~template:foreach:$controller:$method:$variable:end~
+         * If we find those matches, we need the content between the begin and end
+         * so we know what to replace.
+         */
+        preg_match_all('/~template:foreach:(.*?):(.*?):(.*?):begin~/', $contents, $matches);
+        if (empty($matches[0]) === FALSE) {
+            foreach ($matches[0] as $idx => $loopStart) {
+                $loopEnd      = str_replace(':begin~', ':end~', $loopStart);
+                $startpos     = strpos($contents, $loopStart) + strlen($loopStart);
+                $endpos       = strpos($contents, $loopEnd);
+                $loopContents = substr($contents, $startpos, ($endpos - $startpos));
+                $allContents  = '';
+
+                /**
+                 * We've worked out where the start and end of the foreach is, now we need to
+                 * work out the replacement content.
+                 */
+                $keyword = '~'.$matches[1][$idx].':'.$matches[2][$idx].':'.$matches[3][$idx].'~';
+                foreach (self::$_keywords[$keyword] as $keywordIdx => $keywordInfo) {
+                    $newContents = $loopContents;
+                    foreach ($keywordInfo as $keywordName => $keywordValue) {
+                        $newContents = str_replace(rtrim($keyword,'~').':'.$keywordName.'~', $keywordValue, $newContents);
+                    }
+                    $allContents .= $newContents;
+                }
+                unset(self::$_keywords[$keyword]);
+                $contents = substr_replace($contents, $allContents, strpos($contents, $loopStart), $endpos);
+            }
         }
 
         preg_match_all('/~template:include:(.*?)~/', $contents, $matches);
