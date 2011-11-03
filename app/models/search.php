@@ -99,7 +99,7 @@ class searchModel
         // See http://www.flickr.com/services/api/flickr.photos.search.html
 
         $responseAttributes = $responseXml->attributes();
-        $responseType       = $responseAttributes['stat'];
+        $responseType       = (string)$responseAttributes['stat'];
 
         $searchResults = array();
         $searchResults['response'] = (string)$responseType;
@@ -107,8 +107,8 @@ class searchModel
         if ($responseType === 'fail') {
             foreach ($responseXml->children() as $error) {
                 $errorInfo = $error->attributes();
-                $errorCode = $errorInfo['code'];
-                $errorMsg  = $errorInfo['msg'];
+                $errorCode = (string)$errorInfo['code'];
+                $errorMsg  = (string)$errorInfo['msg'];
             }
             $searchResults['info'] = array(
                                       'code'    => $errorCode,

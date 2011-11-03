@@ -65,7 +65,7 @@ class search extends initialize
          * Make sure we get an "OK" response.
          */
         if ($results['response'] !== 'ok') {
-            trigger_error('Unable to search for '.$searchTerms.' and page '.$page.':'.$e->getMessage(), E_USER_ERROR);
+            trigger_error('Unable to search for '.$searchTerms.' and page '.$page.':'.$results['info']['message'].' (code '.$results['info']['code'].')', E_USER_ERROR);
             exit;
         }
 
