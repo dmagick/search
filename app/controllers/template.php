@@ -155,7 +155,18 @@ class template extends initialize
                     $allContents .= $newContents;
                 }
                 unset(self::$_keywords[$keyword]);
-                $contents = substr_replace($contents, $allContents, strpos($contents, $loopStart), $endpos);
+
+                /**
+                 * Now replace the whole foreach block with the new contents.
+                 * For the end, we need to get rid of the ~template:foreach:x:y:z:end~ as well
+                 * so make sure we add that.
+                 * Then substr_replace needs the length of the string to be replaced,
+                 * not the start/end positions.
+                 */
+                $start    = strpos($contents, $loopStart);
+                $end      = strpos($contents, $loopEnd) + strlen($loopEnd);
+                $contents = substr_replace($contents, $allContents, $start, ($end - $start));
+
             }
         }
 
