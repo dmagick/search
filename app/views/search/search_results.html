@@ -2,7 +2,12 @@
 To start a new search, enter a search term in the box below.<br/>
 ~template:include:search/searchform.html~
 Your search for "~search:search:term~" returned ~search:search:total~ results.<br/>
+<div class="search_result_list">
 ~template:foreach:search:search:results:begin~
-	<a href="~search:search:results:fullurl~" target="_blank"><img src="~search:search:results:thumbnail~" alt="~search:search:results:title~" border="0" /></a><br/>
+	<div class="search_result_item">
+		<a href="~search:search:results:fullurl~" target="_blank"><img src="~search:search:results:thumbnail~" alt="~search:search:results:title~" border="0" /></a>
+		<div class="search_result_item_title">~search:search:results:title~</div>
+	</div>
 ~template:foreach:search:search:results:end~
+</div>
 ~template:include:footer.html~
