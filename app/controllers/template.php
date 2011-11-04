@@ -49,8 +49,9 @@ class template extends initialize
         $server = trim($_SERVER['HTTP_HOST'], '/');
         $folder = trim($_SERVER['SCRIPT_NAME'], '/');
         $url    = $protocol.'://'.$server.'/'.$folder;
-        self::$_keywords['~system:base:url~'] = $url;
 
+        self::$_keywords['~system:base:url~']    = $url;
+        self::$_keywords['~system:base:weburl~'] = str_replace('/index.php', '', $url);
         return TRUE;
     }
 
