@@ -4,7 +4,7 @@ body {
 }
 
 .search_result_list {
-	margin-left: 30%;
+	margin-left: 40%;
 }
 
 .search_result_item {
@@ -18,3 +18,17 @@ body {
 	margin-top: 10px;
 	text-align: center;
 }
+.search_result_pagination {
+	margin: 5px;
+	text-align: center;
+	width: 250px;
+}
+.search_result_pagination_current {
+	text-decoration: none;
+}
+
+a:link {color:blue;}      /* unvisited link */
+a:visited {color:blue;}  /* visited link */
+a:hover {color:red;}  /* mouse over link */
+a:active {color:red;}  /* selected link */ 
+

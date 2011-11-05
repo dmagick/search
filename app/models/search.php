@@ -102,7 +102,8 @@ class searchModel
         $responseType       = (string)$responseAttributes['stat'];
 
         $searchResults = array();
-        $searchResults['response'] = (string)$responseType;
+        $searchResults['response']    = (string)$responseType;
+        $searchResults['currentpage'] = $pageNum;
 
         if ($responseType === 'fail') {
             foreach ($responseXml->children() as $error) {

@@ -77,7 +77,43 @@ class search extends initialize
             return;
         }
 
-        /**
+        if ($results['currentpage'] <= 1) {
+            template::setKeyword('search:search:prevnumber', 1);
+        } else {
+            template::setKeyword('search:search:prevnumber', ($results['currentpage'] - 1));
+        }
+
+        if ($results['currentpage'] < $results['info']['pages']) {
+            template::setKeyword('search:search:nextnumber', ($results['currentpage'] + 1));
+        } else {
+            template::setKeyword('search:search:nextnumber', $results['currentpage']);
+        }
+
+        $pagination = array();
+        $numPagesToShow = 5;
+        $startPage = 1;
+        $endPage   = $numPagesToShow;
+        $midPage   = ceil($numPagesToShow / 2);
+        if ($results['currentpage'] > $midPage) {
+            $startPage = $results['currentpage'] - $midPage;
+            $endPage   = $results['currentpage'] + $midPage;
+        }
+        for ($x = $startPage; $x <= $endPage; $x++) {
+            $class = '';
+            if ($x === $results['currentpage']) {
+                $class = 'search_result_pagination_current';
+            }
+            $pagination[] = array(
+                             'class'      => $class,
+                             'pagenumber' => $x,
+                            );
+        }
+        template::setKeyword('search:search:pagination', $pagination);
+        template::setKeyword('search:search:paginationbottom', $pagination);
+        template::setKeyword('search:search:currentpage', $results['currentpage']);
+        template::setKeyword('search:search:totalpages', $results['info']['pages']);
+
+       /**
          * Just in case there are weird characters or quotes etc we need to deal with..
          */
         foreach ($results['photos'] as $_idx => $photo) {

@@ -1,13 +1,28 @@
 ~template:include:header.html~
 To start a new search, enter a search term in the box below.<br/>
 ~template:include:search/searchform.html~
-Your search for "~search:search:term~" returned ~search:search:total~ results.<br/>
 <div class="search_result_list">
+	Your search for "~search:search:term~" returned ~search:search:total~ results.<br/>
+	Viewing page ~search:search:currentpage~ / ~search:search:totalpages~<br/>
+	<div class="search_result_pagination">
+		<a href="~system:base:url~/search?search=~search:search:term~&page=~search:search:prevnumber~">Previous</a>
+		~template:foreach:search:search:pagination:begin~
+			<a class="~search:search:pagination:class~" href="~system:base:url~/search?search=~search:search:term~&page=~search:search:pagination:pagenumber~">~search:search:pagination:pagenumber~</a>
+		~template:foreach:search:search:pagination:end~
+		<a href="~system:base:url~/search?search=~search:search:term~&page=~search:search:nextnumber~">Next</a>
+	</div>
 ~template:foreach:search:search:results:begin~
 	<div class="search_result_item">
 		<a href="~search:search:results:fullurl~" target="_blank"><img src="~search:search:results:thumbnail~" alt="~search:search:results:title~" border="0" /></a>
 		<div class="search_result_item_title">~search:search:results:title~</div>
 	</div>
 ~template:foreach:search:search:results:end~
+	<div class="search_result_pagination">
+		<a href="~system:base:url~/search?search=~search:search:term~&page=~search:search:prevnumber~">Previous</a>
+		~template:foreach:search:search:paginationbottom:begin~
+			<a class="~search:search:paginationbottom:class~" href="~system:base:url~/search?search=~search:search:term~&page=~search:search:paginationbottom:pagenumber~">~search:search:paginationbottom:pagenumber~</a>
+		~template:foreach:search:search:paginationbottom:end~
+		<a href="~system:base:url~/search?search=~search:search:term~&page=~search:search:nextnumber~">Next</a>
+	</div>
 </div>
 ~template:include:footer.html~
