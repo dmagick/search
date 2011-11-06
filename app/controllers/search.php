@@ -93,14 +93,14 @@ class search extends initialize
         $numPagesToShow = 5;
         $startPage = 1;
         $endPage   = $numPagesToShow;
-        $midPage   = ceil($numPagesToShow / 2);
+        $midPage   = floor($numPagesToShow / 2);
         if ($results['currentpage'] > $midPage) {
             $startPage = $results['currentpage'] - $midPage;
             $endPage   = $results['currentpage'] + $midPage;
         }
         for ($x = $startPage; $x <= $endPage; $x++) {
             $class = '';
-            if ($x === $results['currentpage']) {
+            if ($x == $results['currentpage']) {
                 $class = 'search_result_pagination_current';
             }
             $pagination[] = array(
