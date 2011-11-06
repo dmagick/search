@@ -83,24 +83,29 @@ abstract class initialize
             exit;
         }
 
+        $errors = array();
         $config = require $configFile;
         if (isset($config['flickrApiKey']) === FALSE || empty($config['flickrApiKey']) === TRUE) {
+            $errors[] = array('error' => 'Please set the flickr api key in app/config.php.');
+        }
+
+        $logDir = self::$_basedir.'/app/logs';
+
+        if (is_dir($logDir) === FALSE) {
+            $errors[] = array('error' => 'Please create an app/logs directory and make sure it\'s writable by the web server.');
+        } else {
+            if (is_writable($logDir) === FALSE) {
+                $errors[] = array('error' => 'The app/logs directory exists but it\'s not writable by the web server.');
+            }
+        }
+
+        if (empty($errors) === FALSE) {
+            template::setKeyword('configuration_required:errors:errors', $errors);
             template::printTemplate(NULL, 'configuration_required', 500);
             exit;
         }
 
         self::$_config = $config;
-
-        $logDir = self::$_basedir.'/app/logs';
-
-        if (is_dir($logDir) === FALSE) {
-            template::printTemplate(NULL, 'configuration_required', 500);
-            exit;
-        }
-        if (is_writable($logDir) === FALSE) {
-            template::printTemplate(NULL, 'configuration_required', 500);
-            exit;
-        }
 
         $controller = 'search';
         $otherInfo  = '';
