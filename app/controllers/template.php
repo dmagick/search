@@ -7,6 +7,12 @@ if (class_exists('initialize') === FALSE) {
     exit;
 }
 
+/**
+ * Template class.
+ * Handles loading templates (based on the class requiring them),
+ * keyword replacement, setting appropriate http headers and printing
+ * out the template.
+ */
 class template extends initialize
 {
     /**
@@ -23,8 +29,7 @@ class template extends initialize
     /**
      * An array of keywords that will be automatically replaced.
      */
-    private static $_keywords = array(
-                                );
+    private static $_keywords = array();
 
     /**
      * Our own initialize method. Check with the parent that it's ok to proceed first.
